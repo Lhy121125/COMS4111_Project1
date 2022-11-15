@@ -38,7 +38,23 @@
         <td>{{c[2]}}</td>
         <td>{{c[3]}}</td>
         <td>{{c[4]}}</td>
-        <td>{{c[5]}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <br><br>
+  <div>Users Following Information</div>
+
+  <table>
+    <tr>
+      <th>Username</th>
+      <th>Store the User Follow</th>
+      <th>Conglomerate Name</th>
+    </tr>
+    {% for f in fo %}
+      <tr>
+        <td>{{f[0]}}</td>
+        <td>{{f[1]}}</td>
+        <td>{{f[2]}}</td>
       </tr>
     {% endfor %}
   </table>

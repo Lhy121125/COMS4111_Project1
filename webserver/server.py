@@ -182,7 +182,12 @@ def mainpage():
     # for user in users:
     # names.append(user['user_name'])
   users.close()
-  context = dict(data = user)
+  follows = g.conn.execute("""SELECT DISTINCT U.user_name, F.store_id, C.name FROM Users as U, Follow as F, Own_stores as O, Conglomerates as C WHERE U.user_id = F.user_id AND F.store_id = O.store_id AND F.conglomerate_id = C.conglomerate_id""")
+  fo = []
+  for f in follows:
+    fo.append((f[0],f[1],f[2]))
+  follows.close()
+  context = dict(data = user,fo=fo)
 
   return render_template("mainpage.html",**context)
 
