@@ -1,0 +1,54 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<Title>Complaints and Mediations</Title>
+
+<body>
+  <div class="bar">
+    <a class="title" href="/mainpage">Main Page</a>
+    <a href="/">User Login</a>
+    <a href="/complaints">Complaints</a>
+    <a href="/mediation">Mediation</a>
+    <a href="/conglomerates">Stores</a>
+    <a href="/info">About This Website</a>
+</div>
+
+
+  <h1>Complaints and Mediation of Consumers in the US</h1>
+  <div>Those are Our Users</div>
+  
+  <table>
+    <tr>
+      <th>User ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Age</th>
+      <th>Zip</th>
+    </tr>
+    {% for c in data %}
+      <tr>
+        <td>{{c[0]}}</td>
+        <td>{{c[1]}}</td>
+        <td>{{c[2]}}</td>
+        <td>{{c[3]}}</td>
+        <td>{{c[4]}}</td>
+        <td>{{c[5]}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+
+<!-- <form method="POST" action="/add">
+<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+</form> -->
+
+</body>
+
+
+</html>

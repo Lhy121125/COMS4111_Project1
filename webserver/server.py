@@ -18,7 +18,8 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response,session
+from collections import defaultdict
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -57,6 +58,7 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
   name text
 );""")
 engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+
 
 
 
@@ -102,7 +104,7 @@ def teardown_request(exception):
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
 @app.route('/')
-def index():
+def index(methods=['Get','POST']):
   """
   request is a special object that Flask provides to access web request information:
 
@@ -116,15 +118,13 @@ def index():
   # DEBUG: this is debugging code to see what request looks like
   print(request.args)
 
-
+  
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
+
+
+    #user.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -152,14 +152,17 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  
 
 
   #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
-  return render_template("index.html", **context)
+
+
+
+  return render_template("index.html")
 
 #
 # This is an example of a different path.  You can see it at
@@ -169,25 +172,135 @@ def index():
 # notice that the functio name is another() rather than index()
 # the functions for each app.route needs to have different names
 #
-@app.route('/another')
-def another():
-  return render_template("anotherfile.html")
+@app.route('/mainpage')
+def mainpage():
+  users = g.conn.execute("SELECT * FROM Users")
+  user = []
+  #for users in user
+  for result in users:
+    user.append((result[0],result[1],result[2],result[3],result[4]))  # can also be accessed using result[0]
+    # for user in users:
+    # names.append(user['user_name'])
+  users.close()
+  context = dict(data = user)
 
+  return render_template("mainpage.html",**context)
+
+@app.route('/info')
+def info():
+  return render_template("info.html")
+
+@app.route('/conglomerates')
+def conglomerates():
+  cursor = g.conn.execute("SELECT * FROM Conglomerates")
+  cong = []
+  for c in cursor:
+    cong.append((c[1],c[2]))
+  cursor.close()
+  
+  stores = g.conn.execute("""SELECT DISTINCT O.store_id, O.business_building, O.business_address_unit, O.business_street, O.city, O.zip, O.conglomerate_id, C.name FROM Conglomerates as C, Own_stores as O WHERE C.conglomerate_id = O.conglomerate_id""")
+  sto = []
+  for store in stores:
+    sto.append((store[0],store[1],store[2],store[3],store[4],store[5],store[6],store[7]))
+  context = dict(data=cong,store=sto)
+  return render_template("conglomerates.html", **context)
+
+@app.route('/mediation')
+def mediation():
+  cursor = g.conn.execute("SELECT * FROM Mediators")
+  mediators = []
+  for c in cursor:
+    mediators.append((c[1],c[2],c[3]))
+  cursor.close()
+
+  hiring = g.conn.execute("""SELECT DISTINCT C.name, M.mediator_name FROM Hire as H, Mediators as M, Conglomerates as C WHERE H.mediator_id = M.mediator_id AND H.conglomerate_id = C.conglomerate_id""")
+  hires = []
+  for h in hiring:
+    hires.append((h[0],h[1]))
+  hiring.close()
+
+  ins = g.conn.execute("""SELECT DISTINCT * FROM Initiate as I, Mediators as M, Mediations_resolve as R WHERE I.mediator_id = M.mediator_id AND I.mediation_id = R.mediation_id""")
+  inits = []
+  for i in ins:
+    inits.append((i[1],i[3],i[7],i[8],i[9],i[10],i[11]))
+  ins.close()
+  context = dict(data=mediators,hires=hires,ins=inits)
+  return render_template("mediation.html", **context)
+
+@app.route('/complaints')
+def complaints():
+    complains = g.conn.execute("SELECT * FROM Complaints_make_about")
+    coms = []
+    for c in complains:
+        coms.append((c[0],c[1],c[2],c[3],c[4],c[5]))
+    complains.close()
+
+    user_complains = g.conn.execute("""SELECT Distinct U.user_name, A.complaint_id, COUNT(distinct c.comment_id) FROM Users as U, Complaints_make_about as A, Comments_post_under as C WHERE U.user_id = A.user_id AND U.user_id = C.user_id GROUP BY A.complaint_id, U.user_id, c.comment_id""")
+    uc = []
+    for u in user_complains:
+        uc.append((u[0],u[1],u[2]))
+    user_complains.close()
+    context = dict(data=coms,uc=uc)
+    return render_template("complaints.html",**context)
+
+#Make a complaint
+@app.route('/complain', methods=['POST'])
+def complain():
+  complain = request.form['complain']
+  print(complain)
+  #cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)'
+  return redirect('/complaints')
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
   name = request.form['name']
   print(name)
-  cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)';
-  g.conn.execute(text(cmd), name1 = name, name2 = name);
+  cmd = 'INSERT INTO test(name) VALUES (:name1), (:name2)'
+  g.conn.execute(text(cmd), name1 = name, name2 = name)
   return redirect('/')
 
 
-@app.route('/login')
+@app.route('/login', methods=['Get','POST'])
 def login():
-    abort(401)
-    this_is_never_executed()
+    if request.method == 'POST':
+        Username = request.form['Username']
+        Email = request.form['Username']
+        Age = request.form['Age']
+        Zip = request.form['Zip']
+
+        valid_users = g.conn.execute("SELECT user_name FROM Users")
+
+        user = g.conn.execute(
+                'SELECT * FROM user WHERE user_name = ?', (Username,)
+            ).fetchone()
+
+        print(user)
+
+        if user is None:
+            error = 'Incorrect username.'
+        
+        if error is None:
+                # session.clear()
+                # session['user_id'] = user['id']
+                return redirect(mainpage.html)
+    
+    return render_template('/index.html')
+    
+    
+
+    
+
+    # users = []
+
+    # for u in valid_users:
+    #     users.append(u['user_name'])
+    # print(users)
+    # if Username in users:
+    #     return render_template('mainpage.html')
+    
+    return redirect('/')
+    
 
 
 if __name__ == "__main__":

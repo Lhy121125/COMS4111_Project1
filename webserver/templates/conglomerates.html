@@ -1,0 +1,66 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<Title>Stores</Title>
+
+<body>
+  <div class="bar">
+    <a class="title" href="/mainpage">Main Page</a>
+    <a href="/">User Login</a>
+    <a href="/complaints">Complaints</a>
+    <a href="/mediation">Mediation</a>
+    <a href="/conglomerates">Stores</a>
+    <a href="/info">About This Website</a>
+</div>
+
+    <h1>Here are the List of Conglomerates</h1>  
+
+    <table>
+      <tr>
+        <th>Conglomerate Name</th>
+        <th>Industry</th>
+      </tr>
+      {% for c in data %}
+        <tr>
+          <td>{{c[0]}}</td>
+          <td>{{c[1]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h1>Here are the List of Stores</h1>
+    <table>
+      <tr>
+        <th>Store ID</th>
+        <th>Business Building</th>
+        <th>Business Address Unit</th>
+        <th>Business Street</th>
+        <th>City</th>
+        <th>Zip</th>
+        <th>Conglomerate ID</th>
+        <th>Conglomerate Name</th>
+      </tr>
+      {% for s in store %}
+        <tr>
+          <td>{{s[0]}}</td>
+          <td>{{s[1]}}</td>
+          <td>{{s[2]}}</td>
+          <td>{{s[3]}}</td>
+          <td>{{s[4]}}</td>
+          <td>{{s[5]}}</td>
+          <td>{{s[6]}}</td>
+          <td>{{s[7]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+</body>
+
+
+</html>

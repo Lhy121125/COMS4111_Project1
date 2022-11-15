@@ -1,0 +1,86 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<Title>Mediation</Title>
+
+<body>
+  <div class="bar">
+    <a class="title" href="/mainpage">Main Page</a>
+    <a href="/">User Login</a>
+    <a href="/complaints">Complaints</a>
+    <a href="/mediation">Mediation</a>
+    <a href="/conglomerates">Stores</a>
+    <a href="/info">About This Website</a>
+</div>
+
+    <h1>Here are the List of Mediators</h1>  
+
+    <table>
+      <tr>
+        <th>Mediator Name</th>
+        <th>Email</th>
+        <th>Years of Experiences</th>
+        <th>Make an Appointment</th>
+      </tr>
+      {% for c in data %}
+        <tr>
+          <td>{{c[0]}}</td>
+          <td>{{c[1]}}</td>
+          <td>{{c[2]}} years</td>
+          <th><button>Schedule</button></th>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h1>Here are the Hiring Situation of Mediators</h1>  
+
+    <table>
+      <tr>
+        <th>Conglomerate Name</th>
+        <th>Mediator</th>
+      </tr>
+      {% for h in hires %}
+        <tr>
+          <td>{{h[0]}}</td>
+          <td>{{h[1]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h1>Mediation Results:</h1>  
+
+    <table>
+      <tr>
+        <th>Mediation No.</th>
+        <th>Mediator</th>
+        <th>Complaint No.</th>
+        <th>Start Day</th>
+        <th>Close Day</th>
+        <th>Satisfaction</th>
+        <th>Restitution</th>
+      </tr>
+      {% for i in ins %}
+        <tr>
+          <td>{{i[0]}}</td>
+          <td>{{i[1]}}</td>
+          <td>{{i[2]}}</td>
+          <td>{{i[3]}}</td>
+          <td>{{i[4]}}</td>
+          <td>{{i[5]}}</td>
+          <td>${{i[6]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+
+
+</body>
+
+
+</html>

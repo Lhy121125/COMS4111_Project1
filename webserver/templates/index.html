@@ -1,0 +1,43 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<Title>Complaints and Mediations</Title>
+
+<body>
+<nav>
+    <h1>User Login</h1>
+    
+
+
+</nav>
+<section class="content">
+    <form action = "/mainpage">
+        <label for="instrution">Please Enter Your Username and Information to Log In</label>
+        <label for="username">Username</label>
+        <input name="Username" id="user_name" required>
+
+        <label for="Email">Email</label>
+        <input name="Email" id="username" required>
+
+        <label for="Age">Age</label>
+        <input name="Age" id="username" required>
+
+        <label for="Zip">Zip Code</label>
+        <input name="Zip" id="username" required>
+        
+        <input type="submit" value="Submit">
+      </form>
+
+
+</section>
+
+</body>
+
+
+</html>

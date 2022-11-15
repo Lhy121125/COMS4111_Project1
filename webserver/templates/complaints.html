@@ -1,0 +1,75 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<Title>Complain</Title>
+
+<body>
+  <div class="bar">
+    <a class="title" href="/mainpage">Main Page</a>
+    <a href="/">User Login</a>
+    <a href="/complaints">Complaints</a>
+    <a href="/mediation">Mediation</a>
+    <a href="/conglomerates">Stores</a>
+    <a href="/info">About This Website</a>
+</div>
+
+    <h1>Not Satisfied with a Store? Make a Complain</h1>  
+
+<form method="POST" action="/complain">
+<p>Store You Want to Complain: 
+    <br>
+    <p>Select a Store: <input type="text" name="store_name"> </p>
+    <p>Describe the Issue: <input type="text" name="complaint_type"></p>
+    <input type="submit" value="Complain"></p>
+</form>
+
+<div>Those are The Complaints</div>
+  
+<table>
+  <tr>
+    <th>Complain No.</th>
+    <th>Complainer</th>
+    <th>Store ID</th>
+    <th>Conglomerate ID</th>
+    <th>Complaint Type</th>
+    <th>Complaint Result</th>
+  </tr>
+  {% for c in data %}
+    <tr>
+      <td>{{c[0]}}</td>
+      <td>{{c[1]}}</td>
+      <td>{{c[2]}}</td>
+      <td>{{c[3]}}</td>
+      <td>{{c[4]}}</td>
+      <td>{{c[5]}}</td>
+    </tr>
+  {% endfor %}
+</table>
+<br><br><br><br><br>
+<div>Who Makes Those Complaints?</div>
+  
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Complain No.</th>
+    <th>Popularity (Number of comment below)</th>
+  </tr>
+  {% for u in uc %}
+    <tr>
+      <td>{{u[0]}}</td>
+      <td>{{u[1]}}</td>
+      <td>{{u[2]}}</td>
+    </tr>
+  {% endfor %}
+</table>
+
+</body>
+
+
+</html>
